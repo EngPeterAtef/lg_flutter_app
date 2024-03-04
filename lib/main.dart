@@ -3,9 +3,20 @@
 import 'package:flutter/material.dart';
 import 'package:lg_app/screens/home.dart';
 import 'package:flutter/services.dart';
+import 'package:lg_app/screens/settings.dart';
 
+// void main() {
+//   runApp(const MyApp());
+// }
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    // Lock orientation to landscape
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -90,11 +101,17 @@ class MyApp extends StatelessWidget {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     return MaterialApp(
       title: 'Liquid Galaxy Control',
+      initialRoute: '/',
+      routes: {
+        // '/': (context) => const HomeScreen(), // Root route
+        '/settings': (context) => const SettingsPage(), // Settings route
+      },
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(isDarkMode: isDarkMode),
+      home: const HomeScreen(),
+      // home: HomeScreen(isDarkMode: isDarkMode),
     );
   }
 }
