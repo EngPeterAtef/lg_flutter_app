@@ -11,33 +11,83 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData lightTheme = ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.white,
+      primarySwatch: Colors.blue,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.blue,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    ThemeData darkTheme = ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: Colors.black,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color.fromARGB(255, 44, 43, 43),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      primaryColorDark: Colors.black,
+      primaryColor: Colors.black,
+      dialogBackgroundColor: Colors.black,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(const Color.fromARGB(255, 44, 43, 43)),
+          textStyle: MaterialStateProperty.all(
+            const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      primaryTextTheme: const TextTheme(
+        bodyLarge: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    // get a bool to know the theme mode of the device
+    bool isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return MaterialApp(
       title: 'Liquid Galaxy Control',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: HomeScreen(isDarkMode: isDarkMode),
     );
   }
 }
 
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  bool isDarkMode;
+
+  HomeScreen({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
+    // text color
+    Color textColor = isDarkMode ? Colors.white : Colors.blue;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Liquid Galaxy Control',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
         ),
-        backgroundColor: Colors.blue,
         actions: [
           // add the logo image as button goes to home
           IconButton(
@@ -95,25 +145,45 @@ class HomeScreen extends StatelessWidget {
                     // Handle reboot LG
                     // Show warning pop-up
                   },
-                  child: const Text('Reboot LG'),
+                  child: Text(
+                    'Reboot LG',
+                    style: TextStyle(
+                      color: textColor,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle move LG to home city
                   },
-                  child: const Text('Move LG to Home City'),
+                  child: Text(
+                    'Move LG to Home City',
+                    style: TextStyle(
+                      color: textColor,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle make orbit upon arrival
                   },
-                  child: const Text('Make Orbit Upon Arrival'),
+                  child: Text(
+                    'Make Orbit Upon Arrival',
+                    style: TextStyle(
+                      color: textColor,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle print HTML bubble
                   },
-                  child: const Text('Print HTML Bubble'),
+                  child: Text(
+                    'Print HTML Bubble',
+                    style: TextStyle(
+                      color: textColor,
+                    ),
+                  ),
                 ),
               ],
             )
