@@ -12,9 +12,26 @@ class ReusableCard extends StatelessWidget {
     return GestureDetector(
       onTap: onPress,
       child: Container(
-        margin: const EdgeInsets.all(10.0),
+        height: MediaQuery.of(context).size.height * 0.2,
+        margin: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-            color: colour, borderRadius: BorderRadius.circular(20)),
+          color: colour,
+          borderRadius: BorderRadius.circular(30),
+          // gradient: Gradient.lerp(
+          //   const LinearGradient(
+          //     begin: Alignment.topLeft,
+          //     end: Alignment.bottomRight,
+          //     colors: [Colors.white, Colors.grey],
+          //   ),
+          //   const LinearGradient(
+          //     begin: Alignment.topLeft,
+          //     end: Alignment.bottomRight,
+          //     colors: [Colors.grey, Colors.grey],
+          //     stops: [0.5, 0.5],
+          //   ),
+          //   0.5,
+          // ),
+        ),
         child: cardChild,
       ),
     );

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:lg_app/components/connection_flag.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -174,11 +176,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   // Initalize SSH Instance and call connectToLG() function
                   SSH ssh = SSH();
                   bool? result = await ssh.connectToLG();
-                  if (result == true) {
+                  if (result != true) {
                     setState(() {
                       connectionStatus = true;
                     });
                     debugPrint('Connected to LG successfully');
+                  } else {
+                    setState(() {
+                      connectionStatus = false;
+                    });
+                    debugPrint('Failed to connect to LG');
                   }
                 },
                 child: const Padding(
@@ -248,7 +255,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           width: 20,
                         ),
                         Text(
-                          'SEND COMMAND TO LG',
+                          'SEND COMMAND TO LG (Go to Lleida)',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,

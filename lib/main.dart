@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
     ThemeData lightTheme = ThemeData(
       brightness: Brightness.light,
       primaryColor: Colors.white,
-      primarySwatch: Colors.blue,
+      primarySwatch: Colors.grey,
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey,
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 30,
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          backgroundColor: MaterialStateProperty.all(Colors.blue),
+          backgroundColor: MaterialStateProperty.all(Colors.grey),
           textStyle: MaterialStateProperty.all(
             const TextStyle(
               color: Colors.white,

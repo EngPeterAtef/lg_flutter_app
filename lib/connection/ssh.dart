@@ -6,6 +6,7 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/material.dart';
 import 'package:lg_app/models/look_at_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SSH {
   late String _host;
@@ -152,6 +153,19 @@ fi
     }
   }
 
+  /// Search about a place in the Google Earth.
+  Future<SSHSession?> searchPlace(String placeName) async {
+    try {
+      connectToLG();
+      final execResult =
+          await _client?.execute('echo "search=$placeName" >/tmp/query.txt');
+      return execResult;
+    } catch (e) {
+      debugPrint('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
+
   /// Setups the Google Earth in slave screens to refresh every 2 seconds.
   Future<void> setRefresh() async {
     const search = '<href>##LG_PHPIFACE##kml\\/slave_{{slave}}.kml<\\/href>';
@@ -245,6 +259,124 @@ fi
     }
   }
 
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  buildOrbit(String content) async {
+    String localPath = await _localPath;
+    File localFile = File('$localPath/Orbit.kml');
+    localFile.writeAsString(content);
+    try {
+      connectToLG();
+      await _client?.run("echo '$content' > /var/www/html/Orbit.kml");
+      await _client!.execute(
+          "echo '\nhttp://lg1:81/Orbit.kml' >> /var/www/html/kmls.txt");
+      return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
+    } catch (e) {
+      debugPrint('Error in building orbit');
+      return Future.error(e);
+    }
+  }
+
+  startOrbit() async {
+    try {
+      return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
+    } catch (e) {
+      debugPrint('Could not connect to host LG');
+      return Future.error(e);
+    }
+  }
+
+  stopOrbit() async {
+    try {
+      return await _client!.execute('echo "exittour=true" > /tmp/query.txt');
+    } catch (e) {
+      debugPrint('Could not connect to host LG');
+      return Future.error(e);
+    }
+  }
+
+  cleanOrbit() async {
+    try {
+      return await _client!.execute('echo "" > /tmp/query.txt');
+    } catch (e) {
+      debugPrint('Could not connect to host LG');
+      return Future.error(e);
+    }
+  }
+
+  openBalloon(
+    String name,
+    String track,
+    String time,
+    int height,
+    String description,
+  ) async {
+    int rigs = (int.parse(_numberOfRigs) / 2).floor() + 1;
+    String openBalloonKML = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>$name.kml</name>
+	<Style id="purple_paddle">
+		<BalloonStyle>
+			<text>\$[description]</text>
+      <bgColor>4169E11e</bgColor>
+		</BalloonStyle>
+	</Style>
+	<Placemark id="0A7ACC68BF23CB81B354">
+		<name>$track</name>
+		<Snippet maxLines="0"></Snippet>
+		<description><![CDATA[<!-- BalloonStyle background color:
+ffffffff
+ -->
+<table width="400" border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td colspan="2" align="center">
+      <img src="https://myapp33bucket.s3.amazonaws.com/logoo.png" alt="picture" width="150" height="150" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <h1><font color='#00CC99'>$track</font></h1>
+      <h1><font color='#00CC99'>$time</font></h1>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <p><font color="#3399CC">$description</font></p>
+    </td>
+  </tr>
+</table>]]></description>
+		<LookAt>
+			<longitude>72.81555865828552</longitude>
+			<latitude>18.956721869849535</latitude>
+			<altitude>0</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<range>24000</range>
+		</LookAt>
+		<styleUrl>#purple_paddle</styleUrl>
+		<gx:balloonVisibility>1</gx:balloonVisibility>
+		<Point>
+			<coordinates>72.81555865828552,18.956721869849535,0</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>
+''';
+    try {
+      connectToLG();
+      return await _client!.execute(
+          "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
   ///KML services:
   ///------------
 
@@ -257,7 +389,7 @@ fi
   //     final kmlFile = await _fileService.createFile(fileName, tourKml);
 
   //     await _client.uploadKml(kmlFile, fileName);
-  //     print('kml uploaded');
+  //     debugPrint('kml uploaded');
 
   //     await _client
   //         .execute('echo "\n$_url/$fileName" >> /var/www/html/kmls.txt');
