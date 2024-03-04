@@ -23,6 +23,23 @@ class MyApp extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.blue),
+          textStyle: MaterialStateProperty.all(
+            const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
     );
     ThemeData darkTheme = ThemeData(
       brightness: Brightness.dark,
@@ -37,9 +54,15 @@ class MyApp extends StatelessWidget {
       ),
       primaryColorDark: Colors.black,
       primaryColor: Colors.black,
+      primaryColorLight: Colors.grey,
       dialogBackgroundColor: Colors.black,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
           backgroundColor:
               MaterialStateProperty.all(const Color.fromARGB(255, 44, 43, 43)),
           textStyle: MaterialStateProperty.all(
@@ -117,7 +140,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // const CircleAvatar(
@@ -129,63 +152,66 @@ class HomeScreen extends StatelessWidget {
             // ),
             Container(
               // margin: const EdgeInsets.all(15),
+              width: MediaQuery.of(context).size.width * 0.15,
+              height: MediaQuery.of(context).size.height * 0.15,
               alignment: Alignment.center,
               child: Image.asset(
                 'assets/liquidgalaxylogo.png',
-                width: MediaQuery.of(context).size.width * 0.15,
-                height: MediaQuery.of(context).size.height * 0.15,
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle reboot LG
-                    // Show warning pop-up
-                  },
-                  child: Text(
-                    'Reboot LG',
-                    style: TextStyle(
-                      color: textColor,
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.55,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle reboot LG
+                      // Show warning pop-up
+                    },
+                    child: Text(
+                      'Reboot LG',
+                      style: TextStyle(
+                        color: textColor,
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle move LG to home city
-                  },
-                  child: Text(
-                    'Move LG to Home City',
-                    style: TextStyle(
-                      color: textColor,
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle move LG to home city
+                    },
+                    child: Text(
+                      'Move LG to Home City',
+                      style: TextStyle(
+                        color: textColor,
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle make orbit upon arrival
-                  },
-                  child: Text(
-                    'Make Orbit Upon Arrival',
-                    style: TextStyle(
-                      color: textColor,
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle make orbit upon arrival
+                    },
+                    child: Text(
+                      'Make Orbit Upon Arrival',
+                      style: TextStyle(
+                        color: textColor,
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle print HTML bubble
-                  },
-                  child: Text(
-                    'Print HTML Bubble',
-                    style: TextStyle(
-                      color: textColor,
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle print HTML bubble
+                    },
+                    child: Text(
+                      'Print HTML Bubble',
+                      style: TextStyle(
+                        color: textColor,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
@@ -206,39 +232,90 @@ class SettingsScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Liquid Galaxy Connection User'),
+            Container(
+              margin: const EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Liquid Galaxy Connection User',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Liquid Galaxy Connection Password',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Liquid Galaxy Connection Host Name',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Liquid Galaxy Connection Port',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Administration Password',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Server IP Variable (Advanced)',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Server Port Variable (Advanced)',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ],
+              ),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Liquid Galaxy Connection Password'),
-              obscureText: true,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Liquid Galaxy Connection Host Name'),
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Liquid Galaxy Connection Port'),
-              keyboardType: TextInputType.number,
-            ),
-            TextFormField(
-              decoration:
-                  const InputDecoration(labelText: 'Administration Password'),
-              obscureText: true,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Server IP Variable (Advanced)'),
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Server Port Variable (Advanced)'),
-              keyboardType: TextInputType.number,
+            // add connect button
+            ElevatedButton(
+              onPressed: () {
+                // Handle connect to LG
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.red),
+              ),
+              child: const Text('Connect',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
           ],
         ),
