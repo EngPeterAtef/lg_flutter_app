@@ -92,6 +92,15 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Connection Settings'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () async {
+                await Navigator.pushReplacementNamed(context, '/');
+                _connectToLG();
+              },
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

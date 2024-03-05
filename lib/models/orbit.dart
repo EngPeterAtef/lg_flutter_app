@@ -4,8 +4,8 @@ class Orbit {
     int orbit = 0;
     String content = 'Content here';
     String range = '40000';
-    double latvalue = 18.956721869849535;
-    double longvalue = 72.81555865828552;
+    double latvalue = 20.05;
+    double longvalue = 38.071;
     while (orbit <= 36) {
       if (heading >= 360) heading -= 360;
       content += '''
@@ -19,7 +19,7 @@ class Orbit {
                   <tilt>60</tilt>
                   <range>$range</range>
                   <gx:fovy>60</gx:fovy> 
-                  <altitude>3341.7995674</altitude> 
+                  <altitude>5000</altitude> 
                   <gx:altitudeMode>absolute</gx:altitudeMode>
               </LookAt>
             </gx:FlyTo>

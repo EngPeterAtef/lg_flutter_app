@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ssh = SSH();
     _connectToLG();
   }
+  // call the _connectToLG() method every time you opens the sceen
 
   Future<void> _connectToLG() async {
     bool? result = await ssh.connectToLG();
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () async {
-              await Navigator.pushNamed(context, '/settings');
+              await Navigator.pushReplacementNamed(context, '/settings');
               _connectToLG();
             },
           ),
@@ -69,7 +70,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     colour: Colors.grey,
                     onPress: () async {
                       // Implement relaunchLG() as async task
-                      ssh.relaunch();
+                      if (connectionStatus == true) {
+                        await ssh.relaunch();
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
+                      }
                     },
                     cardChild: const Center(
                       child: Text(
@@ -87,7 +103,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     colour: Colors.grey,
                     onPress: () async {
                       // Implement shutdownLG() as async task
-                      ssh.shutdown();
+                      if (connectionStatus == true) {
+                        await ssh.shutdown();
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
+                      }
                     },
                     cardChild: const Center(
                       child: Text(
@@ -99,11 +130,57 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                )
+                ),
+                Expanded(
+                  child: ReusableCard(
+                    colour: Colors.grey,
+                    onPress: () async {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.warning,
+                        headerAnimationLoop: false,
+                        animType: AnimType.bottomSlide,
+                        title: 'Do you want to reboot the LG rig?',
+                        desc:
+                            'This will switch off the current session of the rig and reboot the machine',
+                        buttonsTextStyle: const TextStyle(color: Colors.white),
+                        showCloseIcon: true,
+                        btnCancelOnPress: () {},
+                        btnOkOnPress: () async {
+                          if (connectionStatus == true) {
+                            await ssh.reboot();
+                          } else {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.error,
+                              headerAnimationLoop: false,
+                              animType: AnimType.bottomSlide,
+                              title: 'Error!!!',
+                              desc: 'You are not connected to LG.',
+                              buttonsTextStyle:
+                                  const TextStyle(color: Colors.white),
+                              showCloseIcon: true,
+                              btnCancelOnPress: () {},
+                            ).show();
+                          }
+                        },
+                      ).show();
+                    },
+                    cardChild: const Center(
+                      child: Text(
+                        'REBOOT LG',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          //
           Expanded(
             child: Row(
               children: [
@@ -131,25 +208,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ReusableCard(
                     colour: Colors.grey,
                     onPress: () async {
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.warning,
-                        headerAnimationLoop: false,
-                        animType: AnimType.bottomSlide,
-                        title: 'Do you want to reboot the LG rig?',
-                        desc:
-                            'This will switch off the current session of the rig and reboot the machine',
-                        buttonsTextStyle: const TextStyle(color: Colors.white),
-                        showCloseIcon: true,
-                        btnCancelOnPress: () {},
-                        btnOkOnPress: () async {
-                          await ssh.reboot();
-                        },
-                      ).show();
+                      // Implement searchPlace(String searchPlace) as async task and test
+                      ssh.startOrbit();
                     },
                     cardChild: const Center(
                       child: Text(
-                        'REBOOT LG',
+                        // Add searchPlace variable to the button
+                        "Start Orbit!",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ReusableCard(
+                    colour: Colors.grey,
+                    onPress: () async {
+                      // Implement searchPlace(String searchPlace) as async task and test
+                      ssh.stopOrbit();
+                    },
+                    cardChild: const Center(
+                      child: Text(
+                        // Add searchPlace variable to the button
+                        "Stop Orbit!",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -170,21 +255,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     colour: Colors.grey,
                     onPress: () async {
                       // Implement sendKML() as async task
-                      ssh.searchPlace("Mumbai").then((value) {
-                        ssh.openBalloon(
-                            "Mumbai",
-                            "Mumbai",
-                            "- Manas Dalvi",
-                            240,
-                            "Mumbai is the financial, commercial, and entertainment capital of India. It is also one of the world's top ten centers of commerce in terms of global financial flow. Mumbai is located on the west coast of India, and it is the country's most populous city. Mumbai is known for its film production, and it is also home to the Hindi film industry, known as Bollywood.");
-                      });
 
-                      // await ssh.openBalloon(
-                      //     "Mumbai",
-                      //     "Mumbai",
-                      //     "- Manas Dalvi",
-                      //     240,
-                      //     "Mumbai is the financial, commercial, and entertainment capital of India. It is also one of the world's top ten centers of commerce in terms of global financial flow. Mumbai is located on the west coast of India, and it is the country's most populous city. Mumbai is known for its film production, and it is also home to the Hindi film industry, known as Bollywood.");
+                      if (connectionStatus == true) {
+                        await ssh.searchPlace("Egypt").then((value) {
+                          ssh.openBalloon("Egypt", "Egypt", "- Peter Atef", 500,
+                              "Egypt is a country in the northeastern corner of Africa, whose territory in the Sinai Peninsula extends beyond the continental boundary with Asia, as traditionally defined. Egypt is bordered");
+                        });
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
+                      }
                     },
                     cardChild: const Center(
                       child: Text(
@@ -202,8 +292,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ReusableCard(
                     colour: Colors.grey,
                     onPress: () async {
-                      // TODO 16: Implement clearKML() as async task and test
-                      await ssh.stopOrbit();
+                      // Implement clearKML() as async task and test
+                      if (connectionStatus == true) {
+                        await ssh.clearKml();
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
+                      }
                     },
                     cardChild: const Center(
                       child: Text(
@@ -217,32 +322,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
                 Expanded(
                   child: ReusableCard(
                     colour: Colors.grey,
                     onPress: () async {
-                      // Implement buildOrbit() as async task
-                      if (!tourStatus) {
-                        await ssh.stopOrbit();
-                        setState(() {
-                          tourStatus = true;
-                        });
+                      if (connectionStatus == true) {
+                        // Implement buildOrbit() as async task
+                        if (!tourStatus) {
+                          await ssh.stopOrbit();
+                          setState(() {
+                            tourStatus = true;
+                          });
+                        } else {
+                          await ssh.buildOrbit(
+                              Orbit.buildOrbit(Orbit.generateOrbitTag()));
+                          setState(() {
+                            tourStatus = false;
+                          });
+                        }
                       } else {
-                        await ssh
-                            .buildOrbit(
-                                Orbit.buildOrbit(Orbit.generateOrbitTag()))
-                            .then((value) async {
-                          await ssh.startOrbit();
-                        });
-                        setState(() {
-                          tourStatus = false;
-                        });
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
                       }
                     },
                     cardChild: Center(

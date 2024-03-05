@@ -265,7 +265,7 @@ fi
     return directory.path;
   }
 
-  buildOrbit(String content) async {
+  Future<SSHSession?> buildOrbit(String content) async {
     String localPath = await _localPath;
     File localFile = File('$localPath/Orbit.kml');
     localFile.writeAsString(content);
@@ -281,7 +281,8 @@ fi
     }
   }
 
-  startOrbit() async {
+  ///Orbit functionality:
+  Future<SSHSession?> startOrbit() async {
     try {
       return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
     } catch (e) {
@@ -290,7 +291,7 @@ fi
     }
   }
 
-  stopOrbit() async {
+  Future<SSHSession?> stopOrbit() async {
     try {
       return await _client!.execute('echo "exittour=true" > /tmp/query.txt');
     } catch (e) {
@@ -299,7 +300,7 @@ fi
     }
   }
 
-  cleanOrbit() async {
+  Future<SSHSession?> cleanOrbit() async {
     try {
       return await _client!.execute('echo "" > /tmp/query.txt');
     } catch (e) {
@@ -308,7 +309,7 @@ fi
     }
   }
 
-  openBalloon(
+  Future<SSHSession?> openBalloon(
     String name,
     String track,
     String time,
@@ -352,8 +353,8 @@ ffffffff
   </tr>
 </table>]]></description>
 		<LookAt>
-			<longitude>72.81555865828552</longitude>
-			<latitude>18.956721869849535</latitude>
+			<longitude>20.05</longitude>
+			<latitude>38.071</latitude>
 			<altitude>0</altitude>
 			<heading>0</heading>
 			<tilt>0</tilt>
@@ -362,7 +363,7 @@ ffffffff
 		<styleUrl>#purple_paddle</styleUrl>
 		<gx:balloonVisibility>1</gx:balloonVisibility>
 		<Point>
-			<coordinates>72.81555865828552,18.956721869849535,0</coordinates>
+			<coordinates>38.071,20.05,0</coordinates>
 		</Point>
 	</Placemark>
 </Document>
@@ -484,32 +485,61 @@ ffffffff
   //     print(e);
   //   }
   // }
+  /// Generates a blank KML with the given [id].
+  String _generateBlank(String id) {
+    return '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document id="$id">
+  </Document>
+</kml>
+    ''';
+  }
 
-  // /// Clears all `KMLs` from the Google Earth. The [keepLogos] keeps the logos
-  // /// after clearing (default to `true`).
-  // Future<void> clearKml({bool keepLogos = true}) async {
-  //   String query =
-  //       'echo "exittour=true" > /tmp/query.txt && > /var/www/html/kmls.txt';
-  //   for (var i = 2; i <= screenAmount; i++) {
-  //     String blankKml = KMLModel.generateBlank('slave_$i');
-  //     query += " && echo '$blankKml' > /var/www/html/kml/slave_$i.kml";
-  //   }
+  /// Clears all `KMLs` from the Google Earth. The [keepLogos] keeps the logos
+  /// after clearing (default to `true`).
+  Future<void> clearKml({bool keepLogos = true}) async {
+    String query =
+        'echo "exittour=true" > /tmp/query.txt && > /var/www/html/kmls.txt';
+    for (var i = 2; i <= screenAmount; i++) {
+      String blankKml = _generateBlank('slave_$i');
+      query += " && echo '$blankKml' > /var/www/html/kml/slave_$i.kml";
+    }
 
-  //   if (keepLogos) {
-  //     final kml = KMLModel(
-  //       name: 'HAPIS-logos',
-  //       content: '<name>Logos</name>',
-  //       screenOverlay: ScreenOverlayModel.logos().tag,
-  //     );
-
-  //     query +=
-  //         " && echo '${kml.body}' > /var/www/html/kml/slave_$logoScreen.kml";
-  //   }
-  //   try {
-  //     await _client?.execute(query);
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
+    if (keepLogos) {
+      String logosTag = '''
+      <ScreenOverlay>
+        <name>TempLogo</name>
+        <Icon>
+          <href>https://myapp33bucket.s3.amazonaws.com/logoo.png</href>
+        </Icon>
+        <color>ffffffff</color>
+        <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+        <screenXY x="0.02" y="0.95" xunits="fraction" yunits="fraction"/>
+        <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="382.5" y="297" xunits="pixels" yunits="pixels"/>
+      </ScreenOverlay>
+    ''';
+      String kmlBody = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>HAPIS-logos</name>
+    <open>1</open>
+    <Folder>
+      <name>Logos</name>
+      $logosTag
+    </Folder>
+  </Document>
+</kml>
+  ''';
+      query += " && echo '$kmlBody' > /var/www/html/kml/slave_$logoScreen.kml";
+    }
+    try {
+      await _client?.execute(query);
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
 }
