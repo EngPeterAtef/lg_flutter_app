@@ -292,33 +292,33 @@ fi
     }
   }
 
-  ///Orbit functionality:
-  Future<SSHSession?> startOrbit() async {
-    try {
-      return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
-    } catch (e) {
-      debugPrint('Could not connect to host LG');
-      return Future.error(e);
-    }
-  }
+  // ///Orbit functionality:
+  // Future<SSHSession?> startOrbit() async {
+  //   try {
+  //     return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
+  //   } catch (e) {
+  //     debugPrint('Could not connect to host LG');
+  //     return Future.error(e);
+  //   }
+  // }
 
-  Future<SSHSession?> stopOrbit() async {
-    try {
-      return await _client!.execute('echo "exittour=true" > /tmp/query.txt');
-    } catch (e) {
-      debugPrint('Could not connect to host LG');
-      return Future.error(e);
-    }
-  }
+  // Future<SSHSession?> stopOrbit() async {
+  //   try {
+  //     return await _client!.execute('echo "exittour=true" > /tmp/query.txt');
+  //   } catch (e) {
+  //     debugPrint('Could not connect to host LG');
+  //     return Future.error(e);
+  //   }
+  // }
 
-  Future<SSHSession?> cleanOrbit() async {
-    try {
-      return await _client!.execute('echo "" > /tmp/query.txt');
-    } catch (e) {
-      debugPrint('Could not connect to host LG');
-      return Future.error(e);
-    }
-  }
+  // Future<SSHSession?> cleanOrbit() async {
+  //   try {
+  //     return await _client!.execute('echo "" > /tmp/query.txt');
+  //   } catch (e) {
+  //     debugPrint('Could not connect to host LG');
+  //     return Future.error(e);
+  //   }
+  // }
 
   Future<SSHSession?> openBalloon(
     String name,
@@ -435,25 +435,6 @@ ffffffff
   ///KML services:
   ///------------
 
-  ///Visualizing the uploaded KML on LG command: echo "http://lg1:81/$projectname.kml" > /var/www/html/kmls.txt'
-  ///Sending tour to the Google Earth using the KML file and the tourname ex: Orbit
-  /// Sends and starts a `tour` into the Google Earth.
-  // Future<void> sendTour(String tourKml, String tourName) async {
-  //   final fileName = '$tourName.kml';
-  //   try {
-  //     final kmlFile = await _fileService.createFile(fileName, tourKml);
-
-  //     await _client.uploadKml(kmlFile, fileName);
-  //     debugPrint('kml uploaded');
-
-  //     await _client
-  //         .execute('echo "\n$_url/$fileName" >> /var/www/html/kmls.txt');
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e.toString());
-  //   }
-  // }
-
   /// Sets the logos KML into the Liquid Galaxy rig. A KML [name] and [content] may be passed, but it's not required.
   Future<void> setLogos({
     String name = 'HAPIS-logos',
@@ -565,61 +546,6 @@ ffffffff
       print(e);
     }
   }
-
-  /// Sends a the given [kml] to the Liquid Galaxy system.
-  ///
-  /// It also accepts a [List] of images represents by [Map]s. The [images] must
-  /// have the following pattern:
-  /// ```
-  /// [
-  ///   {
-  ///     'name': 'img-1.png',
-  ///     'path': 'path/to/img-1'
-  ///   },
-  ///   {
-  ///     'name': 'img-2.png',
-  ///     'path': 'path/to/img-2'
-  ///   }
-  /// ]
-  /// ```
-  // Future<void> sendKml(KMLModel kml,
-  //     {List<Map<String, String>> images = const []}) async {
-  //   final fileName = '${kml.name}.kml';
-
-  //   for (var img in images) {
-  //     final image = await _fileService.createImage(img['name']!, img['path']!);
-  //     String imageName = img['name']!;
-  //     try {
-  //       await _client.uploadKml(image, imageName);
-  //     } catch (e) {
-  //       // ignore: avoid_print
-  //       print(e);
-  //     }
-  //   }
-  //   try {
-  //     final kmlFile = await _fileService.createFile(fileName, kml.body);
-  //     await _client.uploadKml(kmlFile, fileName);
-  //     await _client.execute('echo "$_url/$fileName" > /var/www/html/kmls.txt');
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
-
-  // Future<void> sendKmlPins(String pinsKml, String placemarkName) async {
-  //   final fileName = '$placemarkName.kml';
-  //   try {
-  //     final kmlFile = await _fileService.createFile(fileName, pinsKml);
-
-  //     await _client?.uploadKml(kmlFile, fileName);
-
-  //     await _client
-  //         ?.execute('echo "\n$_url/$fileName" >> /var/www/html/kmls.txt');
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
 
   /// Generates a blank KML with the given [id].
   String _generateBlank(String id) {
