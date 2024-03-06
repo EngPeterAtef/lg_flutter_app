@@ -2,10 +2,10 @@ class Orbit {
   static generateOrbitTag() {
     double heading = 0;
     int orbit = 0;
-    String content = 'Content here';
-    String range = '40000';
-    double latvalue = 20.05;
-    double longvalue = 38.071;
+    String content = '';
+    String range = '45471.87185313553';
+    double latvalue = 30.07531669808784;
+    double longvalue = 31.15261386906954;
     while (orbit <= 36) {
       if (heading >= 360) heading -= 360;
       content += '''
@@ -18,8 +18,8 @@ class Orbit {
                   <heading>$heading</heading>
                   <tilt>60</tilt>
                   <range>$range</range>
-                  <gx:fovy>60</gx:fovy> 
-                  <altitude>5000</altitude> 
+                  <gx:fovy>35</gx:fovy> 
+                  <altitude>22.76128209356904</altitude> 
                   <gx:altitudeMode>absolute</gx:altitudeMode>
               </LookAt>
             </gx:FlyTo>

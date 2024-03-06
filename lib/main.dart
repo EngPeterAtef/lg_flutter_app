@@ -97,18 +97,18 @@ class MyApp extends StatelessWidget {
       ),
     );
     // get a bool to know the theme mode of the device
-    bool isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
+    // bool isDarkMode =
+    //     MediaQuery.of(context).platformBrightness == Brightness.dark;
     return MaterialApp(
       title: 'Liquid Galaxy Control',
       initialRoute: '/',
       routes: {
-        // '/': (context) => const HomeScreen(), // Root route
         '/settings': (context) => const SettingsPage(), // Settings route
       },
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      // themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
       // home: HomeScreen(isDarkMode: isDarkMode),

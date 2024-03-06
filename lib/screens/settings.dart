@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, deprecated_member_use
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:lg_app/components/connection_flag.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -185,15 +186,40 @@ class _SettingsPageState extends State<SettingsPage> {
                   // Initalize SSH Instance and call connectToLG() function
                   SSH ssh = SSH();
                   bool? result = await ssh.connectToLG();
-                  if (result != true) {
+                  if (result == true) {
                     setState(() {
                       connectionStatus = true;
                     });
+                    // await ssh.setLogos();
+                    // ignore: use_build_context_synchronously
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.success,
+                      headerAnimationLoop: false,
+                      animType: AnimType.bottomSlide,
+                      title: 'Success',
+                      desc: 'You are not connected to LG.',
+                      buttonsTextStyle: const TextStyle(color: Colors.white),
+                      showCloseIcon: true,
+                      btnCancelOnPress: () {},
+                    ).show();
                     debugPrint('Connected to LG successfully');
                   } else {
                     setState(() {
                       connectionStatus = false;
                     });
+                    // ignore: use_build_context_synchronously
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      headerAnimationLoop: false,
+                      animType: AnimType.bottomSlide,
+                      title: 'Error!!!',
+                      desc: 'Failed to connect to to LG.',
+                      buttonsTextStyle: const TextStyle(color: Colors.white),
+                      showCloseIcon: true,
+                      // btnCancelOnPress: () {},
+                    ).show();
                     debugPrint('Failed to connect to LG');
                   }
                 },

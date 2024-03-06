@@ -35,6 +35,16 @@ class SSH {
     return (sA / 2).floor() + 2;
   }
 
+  /// Property that defines the balloon slave screen number according to the [screenAmount] property. (Most right screen)
+  int get balloonScreen {
+    if (screenAmount == 1) {
+      return 1;
+    }
+
+    // Gets the most right screen.
+    return (screenAmount / 2).floor() + 1;
+  }
+
   // Initialize connection details from shared preferences
   Future<void> initConnectionDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,6 +66,7 @@ class SSH {
         username: _username,
         onPasswordRequest: () => _passwordOrKey,
       );
+      screenAmount = int.parse(_numberOfRigs);
       return true;
     } on SocketException catch (e) {
       debugPrint('Failed to connect: $e');
@@ -166,11 +177,11 @@ fi
     }
   }
 
-  /// Setups the Google Earth in slave screens to refresh every 2 seconds.
+  /// Setups the Google Earth in slave screens to refresh every  second.
   Future<void> setRefresh() async {
     const search = '<href>##LG_PHPIFACE##kml\\/slave_{{slave}}.kml<\\/href>';
     const replace =
-        '<href>##LG_PHPIFACE##kml\\/slave_{{slave}}.kml<\\/href><refreshMode>onInterval<\\/refreshMode><refreshInterval>2<\\/refreshInterval>';
+        '<href>##LG_PHPIFACE##kml\\/slave_{{slave}}.kml<\\/href><refreshMode>onInterval<\\/refreshMode><refreshInterval>1<\\/refreshInterval>';
     final command =
         'echo $_passwordOrKey | sudo -S sed -i "s/$search/$replace/" ~/earth/kml/slave/myplaces.kml';
 
@@ -191,7 +202,7 @@ fi
       }
     }
 
-    await reboot();
+    // await reboot();
   }
 
   /// Setups the Google Earth in slave screens to stop refreshing.
@@ -215,7 +226,7 @@ fi
       }
     }
 
-    await reboot();
+    // await reboot();
   }
 
   /// Puts the given [content] into the `/tmp/query.txt` file.
@@ -316,11 +327,13 @@ fi
     int height,
     String description,
   ) async {
-    int rigs = (int.parse(_numberOfRigs) / 2).floor() + 1;
+    int rigs = balloonScreen;
+    debugPrint('rigs: $rigs');
+
     String openBalloonKML = '''
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-<Document>
+<Document id="$rigs>
 	<name>$name.kml</name>
 	<Style id="purple_paddle">
 		<BalloonStyle>
@@ -337,7 +350,7 @@ ffffffff
 <table width="400" border="0" cellspacing="0" cellpadding="5">
   <tr>
     <td colspan="2" align="center">
-      <img src="https://myapp33bucket.s3.amazonaws.com/logoo.png" alt="picture" width="150" height="150" />
+      <img src="https://myapp33bucket.s3.amazonaws.com/logoo.png" alt="picture" width="100" height="100" />
     </td>
   </tr>
   <tr>
@@ -353,28 +366,69 @@ ffffffff
   </tr>
 </table>]]></description>
 		<LookAt>
-			<longitude>20.05</longitude>
-			<latitude>38.071</latitude>
-			<altitude>0</altitude>
+			<longitude>31.15261386906954</longitude>
+			<latitude>30.07531669808784</latitude>
+			<altitude>22.76128209356904</altitude>
 			<heading>0</heading>
 			<tilt>0</tilt>
-			<range>24000</range>
+			<gx:fovy>35</gx:fovy>
+			<range>45471.87185313553</range>
+			<altitudeMode>absolute</altitudeMode>
 		</LookAt>
 		<styleUrl>#purple_paddle</styleUrl>
 		<gx:balloonVisibility>1</gx:balloonVisibility>
 		<Point>
-			<coordinates>38.071,20.05,0</coordinates>
+			<coordinates>31.20885559752747,30.01303892088913,25.75330199843935</coordinates>
 		</Point>
 	</Placemark>
 </Document>
 </kml>
 ''';
+
     try {
-      connectToLG();
       return await _client!.execute(
           "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
     } catch (e) {
       return Future.error(e);
+    }
+  }
+
+  Future<void> runKml(String kmlName) async {
+    try {
+      await _client?.execute(
+          "echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
+
+      debugPrint('kml uploaded');
+    } catch (error) {
+      debugPrint('Error in running kml');
+    }
+  }
+
+  Future<void> cleanKML() async {
+    try {
+      if (_client == null) {
+        debugPrint('SSH client is not initialized.');
+        return;
+      }
+      int rigs = balloonScreen;
+      debugPrint('rigs: $rigs');
+      String openBalloonKML = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document id="$rigs">
+  </Document>
+</kml>
+''';
+      await _client!.execute(
+          "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
+
+      // await _client?.execute('echo "" > /tmp/query.txt');
+      // await _client?.execute("echo '' > /var/www/html/kmls.txt");
+    } catch (error) {
+      await connectToLG();
+      await cleanKML();
+      // showSnackBar(
+      //     context: context, message: error.toString(), color: Colors.red);
     }
   }
 
@@ -400,53 +454,134 @@ ffffffff
   //   }
   // }
 
-  // /// Sets the logos KML into the Liquid Galaxy rig. A KML [name] and [content] may be passed, but it's not required.
-  // Future<void> setLogos({
-  //   String name = 'HAPIS-logos',
-  //   String content = '<name>Logos</name>',
-  // }) async {
-  //   final screenOverlay = ScreenOverlayModel.logos();
+  /// Sets the logos KML into the Liquid Galaxy rig. A KML [name] and [content] may be passed, but it's not required.
+  Future<void> setLogos({
+    String name = 'HAPIS-logos',
+    String content = '<name>Logos</name>',
+  }) async {
+    String tag = '''
+      <ScreenOverlay>
+        <name>LogoSO</name>
+        <Icon>
+          <href>https://github.com/Mahy02/HAPIS-Refurbishment--Humanitarian-Aid-Panoramic-Interactive-System-/blob/main/hapis/assets/images/LOGO%20LIQUID%20GALAXY-sq1000-%20OKnoline.png?raw=true</href>
+        </Icon>
+        <color>ffffffff</color>
+        <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+        <screenXY x="0.02" y="0.95" xunits="fraction" yunits="fraction"/>
+        <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="382.5" y="297" xunits="pixels" yunits="pixels"/>
+      </ScreenOverlay>
+    ''';
+    String kmlBody = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>$name</name>
+    <open>1</open>
+    <Folder>
+      $content
+      $tag
+    </Folder>
+  </Document>
+</kml>
+  ''';
 
-  //   final kml = KMLModel(
-  //     name: name,
-  //     content: content,
-  //     screenOverlay: screenOverlay.tag,
-  //   );
-  //   try {
-  //     await sendKMLToSlave(logoScreen, kml.body);
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
+    try {
+      await sendKMLToSlave(logoScreen, kmlBody);
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
 
-  // /// Sends a KML [content] to the given slave [screen].
-  // Future<void> sendKMLToSlave(int screen, String content) async {
-  //   try {
-  //     await _client
-  //         .execute("echo '$content' > /var/www/html/kml/slave_$screen.kml");
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
+//   /// Sends a KML [content] to the given slave [screen].
+  Future<void> sendKMLToSlave(int screen, String content) async {
+    try {
+      await _client
+          ?.execute("echo '$content' > /var/www/html/kml/slave_$screen.kml");
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
 
-  // /// Sends a the given [kml] to the Liquid Galaxy system.
-  // ///
-  // /// It also accepts a [List] of images represents by [Map]s. The [images] must
-  // /// have the following pattern:
-  // /// ```
-  // /// [
-  // ///   {
-  // ///     'name': 'img-1.png',
-  // ///     'path': 'path/to/img-1'
-  // ///   },
-  // ///   {
-  // ///     'name': 'img-2.png',
-  // ///     'path': 'path/to/img-2'
-  // ///   }
-  // /// ]
-  // /// ```
+  buildBallon() async {
+    //https://github.com/Mahy02/LG_task2/blob/main/assets/images/cairo.png?raw=true
+    String balloonContent = '''
+    <div style="text-align:center;">
+      <b><font size="+3"> 'Giza, Egypt' <font color="#5D5D5D"></font></font></b>
+      </div>
+      <br/><br/>
+      <div style="text-align:center;">
+      <img src="https://github.com/Mahy02/LG_task2/blob/main/assets/images/cairo.png?raw=true" style="display: block; margin: auto; width: 150px; height: 100px;"/><br/><br/>
+     </div>
+      <b>Peter Atef</b>
+      <br/>
+    ''';
+    String kmlBody = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>City-balloon</name>
+    <open>1</open>
+    <Folder>
+    <Style id="balloon-1">
+      <BalloonStyle>
+        <bgColor>000000</bgColor>
+        <text><![CDATA[
+         <html>
+          <body style="font-family: montserrat, sans-serif; font-size: 18px; width: 400px; display: flex; justify-content: center; align-items: center;">
+            <div style="background-color: #ffffff; padding: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+              <span style="color: black;">$balloonContent</span> <!-- Content of the balloon with red color -->
+            </div>
+          </body>
+        </html>
+        ]]></text>
+      </BalloonStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <IconStyle>
+        <scale>0</scale>
+      </IconStyle>
+    </Style>
+    <Placemark>
+      <name>Giza, Egypt-Balloon</name>
+      <styleUrl>#balloon-1</styleUrl>
+      <gx:balloonVisibility>${balloonContent.isEmpty ? 0 : 1}</gx:balloonVisibility>
+    </Placemark>
+    </Folder>
+  </Document>
+</kml>
+  ''';
+    try {
+      /// sending kml to slave where we send to `balloon screen` and send the `kml balloon ` body
+      await sendKMLToSlave(
+        balloonScreen,
+        kmlBody,
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
+
+  /// Sends a the given [kml] to the Liquid Galaxy system.
+  ///
+  /// It also accepts a [List] of images represents by [Map]s. The [images] must
+  /// have the following pattern:
+  /// ```
+  /// [
+  ///   {
+  ///     'name': 'img-1.png',
+  ///     'path': 'path/to/img-1'
+  ///   },
+  ///   {
+  ///     'name': 'img-2.png',
+  ///     'path': 'path/to/img-2'
+  ///   }
+  /// ]
+  /// ```
   // Future<void> sendKml(KMLModel kml,
   //     {List<Map<String, String>> images = const []}) async {
   //   final fileName = '${kml.name}.kml';
@@ -485,6 +620,7 @@ ffffffff
   //     print(e);
   //   }
   // }
+
   /// Generates a blank KML with the given [id].
   String _generateBlank(String id) {
     return '''
@@ -508,7 +644,7 @@ ffffffff
 
     if (keepLogos) {
       String logosTag = '''
-      <ScreenOverlay>
+      <BalloonStyle>
         <name>TempLogo</name>
         <Icon>
           <href>https://myapp33bucket.s3.amazonaws.com/logoo.png</href>
@@ -518,7 +654,7 @@ ffffffff
         <screenXY x="0.02" y="0.95" xunits="fraction" yunits="fraction"/>
         <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
         <size x="382.5" y="297" xunits="pixels" yunits="pixels"/>
-      </ScreenOverlay>
+      </BalloonStyle>
     ''';
       String kmlBody = '''
 <?xml version="1.0" encoding="UTF-8"?>

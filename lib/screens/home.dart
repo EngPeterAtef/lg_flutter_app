@@ -10,7 +10,7 @@ import 'package:lg_app/models/orbit.dart';
 bool connectionStatus = false;
 bool tourStatus = true;
 // Initialize const String searchPlace
-const String searchPlace = 'Egypt';
+const String searchPlace = 'Giza';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     ssh = SSH();
     _connectToLG();
+    ssh.setRefresh();
   }
   // call the _connectToLG() method every time you opens the sceen
 
@@ -62,6 +63,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ConnectionFlag(
                 status: connectionStatus,
               )),
+          Container(
+            // margin: const EdgeInsets.all(15),
+            width: MediaQuery.of(context).size.width * 0.15,
+            height: MediaQuery.of(context).size.height * 0.15,
+            alignment: Alignment.center,
+            child: Image.asset(
+              'assets/liquidgalaxylogo.png',
+            ),
+          ),
           Expanded(
             child: Row(
               children: [
@@ -204,38 +214,80 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                // Expanded(
+                //   child: ReusableCard(
+                //     colour: Colors.grey,
+                //     onPress: () async {
+                //       // Implement startOrbit
+                //       ssh.startOrbit();
+                //     },
+                //     cardChild: const Center(
+                //       child: Text(
+                //         "Start Orbit!",
+                //         style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 40,
+                //           fontWeight: FontWeight.w700,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // Expanded(
+                //   child: ReusableCard(
+                //     colour: Colors.grey,
+                //     onPress: () async {
+                //       ssh.stopOrbit();
+                //     },
+                //     cardChild: const Center(
+                //       child: Text(
+                //         "Stop Orbit!",
+                //         style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 40,
+                //           fontWeight: FontWeight.w700,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Expanded(
                   child: ReusableCard(
                     colour: Colors.grey,
                     onPress: () async {
-                      // Implement searchPlace(String searchPlace) as async task and test
-                      ssh.startOrbit();
+                      if (connectionStatus == true) {
+                        // Implement buildOrbit() as async task
+                        if (!tourStatus) {
+                          await ssh.stopOrbit();
+                        } else {
+                          await SSH().buildOrbit(
+                              Orbit.buildOrbit(Orbit.generateOrbitTag()));
+                          debugPrint("Orbit built successfully!");
+                          // await ssh.startOrbit();
+                          // debugPrint("Orbit started successfully!");
+                        }
+                        setState(() {
+                          tourStatus = !tourStatus;
+                        });
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          headerAnimationLoop: false,
+                          animType: AnimType.bottomSlide,
+                          title: 'Error!!!',
+                          desc: 'You are not connected to LG.',
+                          buttonsTextStyle:
+                              const TextStyle(color: Colors.white),
+                          showCloseIcon: true,
+                          btnCancelOnPress: () {},
+                        ).show();
+                      }
                     },
-                    cardChild: const Center(
+                    cardChild: Center(
                       child: Text(
-                        // Add searchPlace variable to the button
-                        "Start Orbit!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ReusableCard(
-                    colour: Colors.grey,
-                    onPress: () async {
-                      // Implement searchPlace(String searchPlace) as async task and test
-                      ssh.stopOrbit();
-                    },
-                    cardChild: const Center(
-                      child: Text(
-                        // Add searchPlace variable to the button
-                        "Stop Orbit!",
-                        style: TextStyle(
+                        tourStatus ? 'Start a Tour!' : 'End the Tour!',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 40,
                           fontWeight: FontWeight.w700,
@@ -257,10 +309,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Implement sendKML() as async task
 
                       if (connectionStatus == true) {
-                        await ssh.searchPlace("Egypt").then((value) {
-                          ssh.openBalloon("Egypt", "Egypt", "- Peter Atef", 500,
-                              "Egypt is a country in the northeastern corner of Africa, whose territory in the Sinai Peninsula extends beyond the continental boundary with Asia, as traditionally defined. Egypt is bordered");
-                        });
+                        // await ssh.openBalloon("Giza", "Giza", "Peter Atef", 240,
+                        //     "Giza is a city in Egypt. It is located on the west bank of the Nile River, some 20 kilometers (12 miles) southwest of central Cairo. Along with Shubra El-Kheima, Cairo, and Helwan, the four cities form the Province of Greater Cairo metropolis. Giza is the third-largest city in Egypt and the second-largest in Greater Cairo, after Cairo. It is also the second-largest city in North Africa. Its population was 3,628,062 in the 2006 national census, while the governorate had 6,272,571 at the same census. It is the city of the Giza Governorate, and is located in the northeast of this governorate, near its border. The city is located on the west bank of the Nile, near the old town of Memphis. The city's population was 2,681,863 in the 2006 national census, while the governorate had 6,272,571 at the same census.");
+                        // await ssh.runKml("Giza");
+                        await ssh.setLogos();
+                        await ssh.buildBallon();
                       } else {
                         AwesomeDialog(
                           context: context,
@@ -295,6 +348,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Implement clearKML() as async task and test
                       if (connectionStatus == true) {
                         await ssh.clearKml();
+                        await ssh.setRefresh();
+                        // await ssh.clearBalloon();
+                        // await ssh.cleanKML();
+                        debugPrint('KML Cleared');
                       } else {
                         AwesomeDialog(
                           context: context,
@@ -322,51 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: ReusableCard(
-                    colour: Colors.grey,
-                    onPress: () async {
-                      if (connectionStatus == true) {
-                        // Implement buildOrbit() as async task
-                        if (!tourStatus) {
-                          await ssh.stopOrbit();
-                          setState(() {
-                            tourStatus = true;
-                          });
-                        } else {
-                          await ssh.buildOrbit(
-                              Orbit.buildOrbit(Orbit.generateOrbitTag()));
-                          setState(() {
-                            tourStatus = false;
-                          });
-                        }
-                      } else {
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.error,
-                          headerAnimationLoop: false,
-                          animType: AnimType.bottomSlide,
-                          title: 'Error!!!',
-                          desc: 'You are not connected to LG.',
-                          buttonsTextStyle:
-                              const TextStyle(color: Colors.white),
-                          showCloseIcon: true,
-                          btnCancelOnPress: () {},
-                        ).show();
-                      }
-                    },
-                    cardChild: Center(
-                      child: Text(
-                        tourStatus ? 'Start a Tour!' : 'End the Tour!',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+
                 // Expanded(
                 //   child: ReusableCard(
                 //     colour: Colors.grey,
