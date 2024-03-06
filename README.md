@@ -1,6 +1,6 @@
-# lg_app
+# Liquid Galaxy Controller Flutter App
 
-A new Flutter project.
+<img width="1280" alt="image" src="https://github.com/EngPeterAtef/lg_flutter_app/assets/75852529/1042e2c0-dae9-4f41-8a7f-fca65dbd889c">
 
 ## Getting Started
 
