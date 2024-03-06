@@ -1,10 +1,11 @@
 # Liquid Galaxy Controller Flutter App
+<img width="1280" alt="image" src="https://github.com/EngPeterAtef/lg_flutter_app/assets/75852529/1042e2c0-dae9-4f41-8a7f-fca65dbd889c">
 
 ### What is this app?
 
 It's a flutter app which connects to liquid galaxy system and using master-slave architecture we interact with the master machine and send data to all the salves like the logos on the left machine and the info pop-up on the right machine.
-
-<img width="1280" alt="image" src="https://github.com/EngPeterAtef/lg_flutter_app/assets/75852529/1042e2c0-dae9-4f41-8a7f-fca65dbd889c">
+### Demo Video:
+<a href="https://youtu.be/uxSeIsBv4gQ">Video Link</a>
 
 ## Getting Started
 
