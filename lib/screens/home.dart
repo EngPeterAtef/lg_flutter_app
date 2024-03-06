@@ -258,13 +258,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (connectionStatus == true) {
                         // Implement buildOrbit() as async task
                         if (!tourStatus) {
-                          await ssh.stopOrbit();
+                          // await ssh.stopOrbit();
+                          await ssh.stopTour();
                         } else {
-                          await SSH().buildOrbit(
+                          await ssh.buildOrbit(
                               Orbit.buildOrbit(Orbit.generateOrbitTag()));
+                          await ssh.startTour("Orbit");
                           debugPrint("Orbit built successfully!");
-                          // await ssh.startOrbit();
-                          // debugPrint("Orbit started successfully!");
                         }
                         setState(() {
                           tourStatus = !tourStatus;

@@ -283,9 +283,9 @@ fi
     try {
       connectToLG();
       await _client?.run("echo '$content' > /var/www/html/Orbit.kml");
-      await _client!.execute(
+      return await _client!.execute(
           "echo '\nhttp://lg1:81/Orbit.kml' >> /var/www/html/kmls.txt");
-      return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
+      // return await _client!.execute('echo "playtour=Orbit" > /tmp/query.txt');
     } catch (e) {
       debugPrint('Error in building orbit');
       return Future.error(e);
