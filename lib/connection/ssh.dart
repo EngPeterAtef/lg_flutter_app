@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/material.dart';
-import 'package:lg_app/models/look_at_model.dart';
+// import 'package:lg_app/models/look_at_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,9 +15,6 @@ class SSH {
   late String _passwordOrKey;
   late String _numberOfRigs;
   SSHClient? _client;
-
-  /// Property that defines the master rig url.
-  final String _url = 'http://lg1:81';
 
   /// Property that defines number of screens. Defaults to `5`.
   int screenAmount = 5;
@@ -234,18 +231,18 @@ fi
     await _client?.execute('echo "$content" > /tmp/query.txt');
   }
 
-  ///Fly to functionality:
-  /// Command to fly to a certain location: 'echo "flytoview=${flyto.generateLinearString()}" > /tmp/query.txt'
-  /// Uses the [query] method to fly to some place in Google Earth according to the given [lookAt].
-  /// See [LookAtModel].
-  Future<void> flyTo(LookAtModel lookAt) async {
-    try {
-      await query('flytoview=${lookAt.linearTag}');
-    } catch (e) {
-      // ignore: avoid_print
-      print(e);
-    }
-  }
+  // ///Fly to functionality:
+  // /// Command to fly to a certain location: 'echo "flytoview=${flyto.generateLinearString()}" > /tmp/query.txt'
+  // /// Uses the [query] method to fly to some place in Google Earth according to the given [lookAt].
+  // /// See [LookAtModel].
+  // Future<void> flyTo(LookAtModel lookAt) async {
+  //   try {
+  //     await query('flytoview=${lookAt.linearTag}');
+  //   } catch (e) {
+  //     // ignore: avoid_print
+  //     print(e);
+  //   }
+  // }
 
   ///Orbit functionality:
   /// Uses the [query] method to play some tour in Google Earth according to  the given [tourName].
@@ -320,117 +317,117 @@ fi
   //   }
   // }
 
-  Future<SSHSession?> openBalloon(
-    String name,
-    String track,
-    String time,
-    int height,
-    String description,
-  ) async {
-    int rigs = balloonScreen;
-    debugPrint('rigs: $rigs');
+//   Future<SSHSession?> openBalloon(
+//     String name,
+//     String track,
+//     String time,
+//     int height,
+//     String description,
+//   ) async {
+//     int rigs = balloonScreen;
+//     debugPrint('rigs: $rigs');
 
-    String openBalloonKML = '''
-<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-<Document id="$rigs>
-	<name>$name.kml</name>
-	<Style id="purple_paddle">
-		<BalloonStyle>
-			<text>\$[description]</text>
-      <bgColor>4169E11e</bgColor>
-		</BalloonStyle>
-	</Style>
-	<Placemark id="0A7ACC68BF23CB81B354">
-		<name>$track</name>
-		<Snippet maxLines="0"></Snippet>
-		<description><![CDATA[<!-- BalloonStyle background color:
-ffffffff
- -->
-<table width="400" border="0" cellspacing="0" cellpadding="5">
-  <tr>
-    <td colspan="2" align="center">
-      <img src="https://myapp33bucket.s3.amazonaws.com/logoo.png" alt="picture" width="100" height="100" />
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <h1><font color='#00CC99'>$track</font></h1>
-      <h1><font color='#00CC99'>$time</font></h1>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <p><font color="#3399CC">$description</font></p>
-    </td>
-  </tr>
-</table>]]></description>
-		<LookAt>
-			<longitude>31.15261386906954</longitude>
-			<latitude>30.07531669808784</latitude>
-			<altitude>22.76128209356904</altitude>
-			<heading>0</heading>
-			<tilt>0</tilt>
-			<gx:fovy>35</gx:fovy>
-			<range>45471.87185313553</range>
-			<altitudeMode>absolute</altitudeMode>
-		</LookAt>
-		<styleUrl>#purple_paddle</styleUrl>
-		<gx:balloonVisibility>1</gx:balloonVisibility>
-		<Point>
-			<coordinates>31.20885559752747,30.01303892088913,25.75330199843935</coordinates>
-		</Point>
-	</Placemark>
-</Document>
-</kml>
-''';
+//     String openBalloonKML = '''
+// <?xml version="1.0" encoding="UTF-8"?>
+// <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+// <Document id="$rigs>
+// 	<name>$name.kml</name>
+// 	<Style id="purple_paddle">
+// 		<BalloonStyle>
+// 			<text>\$[description]</text>
+//       <bgColor>4169E11e</bgColor>
+// 		</BalloonStyle>
+// 	</Style>
+// 	<Placemark id="0A7ACC68BF23CB81B354">
+// 		<name>$track</name>
+// 		<Snippet maxLines="0"></Snippet>
+// 		<description><![CDATA[<!-- BalloonStyle background color:
+// ffffffff
+//  -->
+// <table width="400" border="0" cellspacing="0" cellpadding="5">
+//   <tr>
+//     <td colspan="2" align="center">
+//       <img src="https://myapp33bucket.s3.amazonaws.com/logoo.png" alt="picture" width="100" height="100" />
+//     </td>
+//   </tr>
+//   <tr>
+//     <td colspan="2" align="center">
+//       <h1><font color='#00CC99'>$track</font></h1>
+//       <h1><font color='#00CC99'>$time</font></h1>
+//     </td>
+//   </tr>
+//   <tr>
+//     <td colspan="2">
+//       <p><font color="#3399CC">$description</font></p>
+//     </td>
+//   </tr>
+// </table>]]></description>
+// 		<LookAt>
+// 			<longitude>31.15261386906954</longitude>
+// 			<latitude>30.07531669808784</latitude>
+// 			<altitude>22.76128209356904</altitude>
+// 			<heading>0</heading>
+// 			<tilt>0</tilt>
+// 			<gx:fovy>35</gx:fovy>
+// 			<range>45471.87185313553</range>
+// 			<altitudeMode>absolute</altitudeMode>
+// 		</LookAt>
+// 		<styleUrl>#purple_paddle</styleUrl>
+// 		<gx:balloonVisibility>1</gx:balloonVisibility>
+// 		<Point>
+// 			<coordinates>31.20885559752747,30.01303892088913,25.75330199843935</coordinates>
+// 		</Point>
+// 	</Placemark>
+// </Document>
+// </kml>
+// ''';
 
-    try {
-      return await _client!.execute(
-          "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
+//     try {
+//       return await _client!.execute(
+//           "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
+//     } catch (e) {
+//       return Future.error(e);
+//     }
+//   }
 
-  Future<void> runKml(String kmlName) async {
-    try {
-      await _client?.execute(
-          "echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
+//   Future<void> runKml(String kmlName) async {
+//     try {
+//       await _client?.execute(
+//           "echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
 
-      debugPrint('kml uploaded');
-    } catch (error) {
-      debugPrint('Error in running kml');
-    }
-  }
+//       debugPrint('kml uploaded');
+//     } catch (error) {
+//       debugPrint('Error in running kml');
+//     }
+//   }
 
-  Future<void> cleanKML() async {
-    try {
-      if (_client == null) {
-        debugPrint('SSH client is not initialized.');
-        return;
-      }
-      int rigs = balloonScreen;
-      debugPrint('rigs: $rigs');
-      String openBalloonKML = '''
-<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-  <Document id="$rigs">
-  </Document>
-</kml>
-''';
-      await _client!.execute(
-          "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
+//   Future<void> cleanKML() async {
+//     try {
+//       if (_client == null) {
+//         debugPrint('SSH client is not initialized.');
+//         return;
+//       }
+//       int rigs = balloonScreen;
+//       debugPrint('rigs: $rigs');
+//       String openBalloonKML = '''
+// <?xml version="1.0" encoding="UTF-8"?>
+// <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+//   <Document id="$rigs">
+//   </Document>
+// </kml>
+// ''';
+//       await _client!.execute(
+//           "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
 
-      // await _client?.execute('echo "" > /tmp/query.txt');
-      // await _client?.execute("echo '' > /var/www/html/kmls.txt");
-    } catch (error) {
-      await connectToLG();
-      await cleanKML();
-      // showSnackBar(
-      //     context: context, message: error.toString(), color: Colors.red);
-    }
-  }
+//       // await _client?.execute('echo "" > /tmp/query.txt');
+//       // await _client?.execute("echo '' > /var/www/html/kmls.txt");
+//     } catch (error) {
+//       await connectToLG();
+//       await cleanKML();
+//       // showSnackBar(
+//       //     context: context, message: error.toString(), color: Colors.red);
+//     }
+//   }
 
   ///KML services:
   ///------------

@@ -20,10 +20,13 @@ class _SettingsPageState extends State<SettingsPage> {
   late SSH ssh;
 
   Future<void> _connectToLG() async {
-    // Connect to Liquid Galaxy Rig
     bool? result = await ssh.connectToLG();
     setState(() {
-      connectionStatus = result!;
+      if (result != null) {
+        connectionStatus = result;
+      } else {
+        connectionStatus = false;
+      }
     });
   }
 
@@ -198,7 +201,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       headerAnimationLoop: false,
                       animType: AnimType.bottomSlide,
                       title: 'Success',
-                      desc: 'You are not connected to LG.',
+                      desc: 'You are connected to LG.',
                       buttonsTextStyle: const TextStyle(color: Colors.white),
                       showCloseIcon: true,
                       btnCancelOnPress: () {},
@@ -309,118 +312,3 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-
-// class SettingsScreen extends StatelessWidget {
-//   const SettingsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Settings'),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.spaceAround,
-//           children: [
-//             Container(
-//               margin: const EdgeInsets.all(15),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Liquid Galaxy Connection User',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Liquid Galaxy Connection Password',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     obscureText: true,
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Liquid Galaxy Connection Host Name',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Liquid Galaxy Connection Port',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     keyboardType: TextInputType.number,
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Administration Password',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     obscureText: true,
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Server IP Variable (Advanced)',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                   ),
-//                   TextFormField(
-//                     decoration: const InputDecoration(
-//                       labelText: 'Server Port Variable (Advanced)',
-//                       labelStyle: TextStyle(
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     keyboardType: TextInputType.number,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             // add connect button
-//             ElevatedButton(
-//               onPressed: () async {
-//                 await _saveSettings();
-//                 // Initalize SSH Instance and call connectToLG() function
-//                 // SSH ssh = SSH();
-//                 // bool? result = await ssh.connectToLG();
-//                 // if (result == true) {
-//                 //   setState(() {
-//                 //     connectionStatus = true;
-//                 //   });
-//                 //   print('Connected to LG successfully');
-//                 // }
-//               },
-//               style: ButtonStyle(
-//                 backgroundColor: MaterialStateProperty.all(Colors.red),
-//               ),
-//               child: const Text('Connect To LG',
-//                   style: TextStyle(
-//                     color: Colors.white,
-//                     fontSize: 20,
-//                     fontWeight: FontWeight.bold,
-//                   )),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

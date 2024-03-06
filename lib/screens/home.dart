@@ -36,7 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _connectToLG() async {
     bool? result = await ssh.connectToLG();
     setState(() {
-      connectionStatus = result!;
+      if (result != null) {
+        connectionStatus = result;
+      } else {
+        connectionStatus = false;
+      }
     });
   }
 
@@ -309,9 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Implement sendKML() as async task
 
                       if (connectionStatus == true) {
-                        // await ssh.openBalloon("Giza", "Giza", "Peter Atef", 240,
-                        //     "Giza is a city in Egypt. It is located on the west bank of the Nile River, some 20 kilometers (12 miles) southwest of central Cairo. Along with Shubra El-Kheima, Cairo, and Helwan, the four cities form the Province of Greater Cairo metropolis. Giza is the third-largest city in Egypt and the second-largest in Greater Cairo, after Cairo. It is also the second-largest city in North Africa. Its population was 3,628,062 in the 2006 national census, while the governorate had 6,272,571 at the same census. It is the city of the Giza Governorate, and is located in the northeast of this governorate, near its border. The city is located on the west bank of the Nile, near the old town of Memphis. The city's population was 2,681,863 in the 2006 national census, while the governorate had 6,272,571 at the same census.");
-                        // await ssh.runKml("Giza");
                         await ssh.setLogos();
                         await ssh.buildBallon();
                       } else {
