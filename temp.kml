@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+    <Document>
+        <name>Agriculture Information</name>
+        <description><![CDATA[
+      <h1>Agriculture Information</h1>
+      <h2>1. Weather</h2>
+      <p>Current weather conditions:</p>
+      <ul>
+        <li>Temperature: <strong>74°F</strong></li>
+        <li>Humidity: <strong>52%</strong></li>
+        <li>Sunrise time: <strong>5:36 AM</strong></li>
+        <li>Sunset time: <strong>8:34 PM</strong></li>
+      </ul>
+
+      <h2>2. Soil Information</h2>
+      <p>Soil composition:</p>
+      <ul>
+        <li>Nitrogen content: <strong>2.5%</strong></li>
+        <li>Phosphorus content: <strong>1.8%</strong></li>
+        <li>Potassium content: <strong>3.0%</strong></li>
+        <li>pH level: <strong>6.5</strong></li>
+        <li>Soil moisture: <strong>Optimal</strong></li>
+      </ul>
+
+      <h2>3. Recommended Crops</h2>
+      <p>Based on soil conditions and weather:</p>
+      <ul>
+        <li>Wheat</li>
+        <li>Corn</li>
+        <li>Soybeans</li>
+      </ul>
+
+      <h2>4. Common Crop Problems</h2>
+      <p>Issues that may affect crops:</p>
+      <ul>
+        <li>Pest infestations</li>
+        <li>Fungal diseases</li>
+        <li>Water stress</li>
+      </ul>
+
+      <h2>5. Soil Problems</h2>
+      <p>Common soil-related problems:</p>
+      <ul>
+        <li>Soil erosion</li>
+        <li>Salinity</li>
+        <li>Compaction</li>
+      </ul>
+
+      <h2>6. Solutions</h2>
+      <p>How to avoid or solve problems:</p>
+      <ul>
+        <li>Implement proper crop rotation</li>
+        <li>Monitor soil moisture regularly</li>
+        <li>Use organic fertilizers</li>
+        <li>Practice no-till farming</li>
+      </ul>
+    ]]>        </description>
+    </Document>
+</kml>

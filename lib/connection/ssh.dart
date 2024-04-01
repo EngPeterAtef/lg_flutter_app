@@ -52,12 +52,11 @@ class SSH {
     _numberOfRigs = prefs.getString('numberOfRigs') ?? '3';
   }
 
+  //Connect to Liquid Galaxy system, using examples from https://pub.dev/packages/dartssh2#:~:text=freeBlocks%7D%27)%3B-,%F0%9F%AA%9C%20Example%20%23,-SSH%20client%3A
   // Connect to the Liquid Galaxy system
   Future<bool?> connectToLG() async {
     await initConnectionDetails();
-
     try {
-      //Connect to Liquid Galaxy system, using examples from https://pub.dev/packages/dartssh2#:~:text=freeBlocks%7D%27)%3B-,%F0%9F%AA%9C%20Example%20%23,-SSH%20client%3A
       _client = SSHClient(
         await SSHSocket.connect(_host, int.parse(_port)),
         username: _username,
@@ -484,7 +483,7 @@ fi
   }
 
   buildBallon() async {
-    //https://github.com/Mahy02/LG_task2/blob/main/assets/images/cairo.png?raw=true
+    // https://github.com/Mahy02/LG_task2/blob/main/assets/images/cairo.png?raw=true
     String balloonContent = '''
     <div style="text-align:center;">
       <b><font size="+3"> 'Giza, Egypt' <font color="#5D5D5D"></font></font></b>
@@ -496,6 +495,60 @@ fi
       <b>Peter Atef</b>
       <br/>
     ''';
+    // String balloonContent = '''
+    //   <h1>Agriculture Information</h1>
+    //   <h2>1. Weather</h2>
+    //   <p>Current weather conditions:</p>
+    //   <ul>
+    //     <li>Temperature: <strong>74°F</strong></li>
+    //     <li>Humidity: <strong>52%</strong></li>
+    //     <li>Sunrise time: <strong>5:36 AM</strong></li>
+    //     <li>Sunset time: <strong>8:34 PM</strong></li>
+    //   </ul>
+
+    //   <h2>2. Soil Information</h2>
+    //   <p>Soil composition:</p>
+    //   <ul>
+    //     <li>Nitrogen content: <strong>2.5%</strong></li>
+    //     <li>Phosphorus content: <strong>1.8%</strong></li>
+    //     <li>Potassium content: <strong>3.0%</strong></li>
+    //     <li>pH level: <strong>6.5</strong></li>
+    //     <li>Soil moisture: <strong>Optimal</strong></li>
+    //   </ul>
+
+    //   <h2>3. Recommended Crops</h2>
+    //   <p>Based on soil conditions and weather:</p>
+    //   <ul>
+    //     <li>Wheat</li>
+    //     <li>Corn</li>
+    //     <li>Soybeans</li>
+    //   </ul>
+
+    //   <h2>4. Common Crop Problems</h2>
+    //   <p>Issues that may affect crops:</p>
+    //   <ul>
+    //     <li>Pest infestations</li>
+    //     <li>Fungal diseases</li>
+    //     <li>Water stress</li>
+    //   </ul>
+
+    //   <h2>5. Soil Problems</h2>
+    //   <p>Common soil-related problems:</p>
+    //   <ul>
+    //     <li>Soil erosion</li>
+    //     <li>Salinity</li>
+    //     <li>Compaction</li>
+    //   </ul>
+
+    //   <h2>6. Solutions</h2>
+    //   <p>How to avoid or solve problems:</p>
+    //   <ul>
+    //     <li>Implement proper crop rotation</li>
+    //     <li>Monitor soil moisture regularly</li>
+    //     <li>Use organic fertilizers</li>
+    //     <li>Practice no-till farming</li>
+    //   </ul>
+    // ''';
     String kmlBody = '''
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
